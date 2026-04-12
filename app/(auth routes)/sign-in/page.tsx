@@ -1,3 +1,5 @@
+import css from "./SignInPage.module.css";
+
 <main className={css.mainContent}>
   <form className={css.form}>
     <h1 className={css.formTitle}>Sign in</h1>

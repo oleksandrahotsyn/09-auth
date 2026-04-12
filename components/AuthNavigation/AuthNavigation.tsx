@@ -1,3 +1,5 @@
+import css from './AuthNavigation.module.css' 
+ 
  <li className={css.navigationItem}>
   <a href="/profile" prefetch={false} className={css.navigationLink}>
     Profile

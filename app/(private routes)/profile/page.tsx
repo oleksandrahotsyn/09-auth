@@ -1,8 +1,10 @@
+import css from "./";
+
 <main className={css.mainContent}>
   <div className={css.profileCard}>
     <div className={css.header}>
       <h1 className={css.formTitle}>Profile Page</h1>
-      <a src="" className={css.editProfileButton}>
+      <a src="/" className={css.editProfileButton}>
         Edit Profile
       </a>
     </div>

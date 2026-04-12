@@ -1,3 +1,5 @@
+import css from "./";
+
 <main className={css.mainContent}>
   <div className={css.profileCard}>
     <h1 className={css.formTitle}>Edit Profile</h1>
