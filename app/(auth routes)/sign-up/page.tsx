@@ -1,12 +1,12 @@
 "use client";
 
-import { RegisterRequest, register } from "@/lib/api/api";
+import { RegisterRequest, register } from "@/lib/api/clientApi";
 import css from "./SignUpPage.module.css";
 import { ApiError } from "@/app/api/api";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const SignUp = () => {
+const SignUpPage = () => {
   const router = useRouter();
   const [error, setError] = useState("");
   const handleSubmit = async (formData: FormData) => {
@@ -67,3 +67,5 @@ const SignUp = () => {
     </main>
   );
 };
+
+export default SignUpPage;

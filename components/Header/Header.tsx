@@ -7,10 +7,10 @@ export default function Header() {
     <header>
       <ul>
         <li>
-          <Link href="/sing-in">Login</Link>
+          <Link href="/sign-in">Login</Link>
         </li>
         <li>
-          <Link href="/sing-up">Register</Link>
+          <Link href="/sign-up">Register</Link>
         </li>
       </ul>
     </header>
