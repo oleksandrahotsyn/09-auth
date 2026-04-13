@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   title: "App",
   description: "next app",
   icons: {
-    icon: "./favicon.ico",
+    icon: "./",
   },
 };
 
