@@ -7,9 +7,10 @@ import { login, RegisterRequest } from "@/lib/api/clientApi";
 import { ApiError } from "next/dist/server/api-utils";
 import css from "./SignInPage.module.css";
 
-const SignIn = () => {
+const SignInPage = () => {
   const router = useRouter();
   const [error, setError] = useState("");
+
   const setUser = useAuthStore((state) => state.setUser);
 
   const handleSubmit = async (formData: FormData) => {
@@ -29,6 +30,7 @@ const SignIn = () => {
       setError((error as ApiError).message ?? "Oops... some error");
     }
   };
+
   return (
     <main className={css.mainContent}>
       <form className={css.form}>
