@@ -16,7 +16,7 @@ export default function NotesClient({ tag }: { tag?: string }) {
   const [searchWord, setSearchWord] = useState<string>("");
   const [page, setPage] = useState(1);
 
-  const normalizedTag = tag === "all" ? undefined : tag;
+  const normalizedTag = tag === "all" ? "" : (tag ?? "");
 
   const handleChange = useDebouncedCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
