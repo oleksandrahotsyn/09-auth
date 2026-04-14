@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Profile page",
     description: "Profile View Page",
-    url: "https://08-zustand-livid-omega.vercel.app/",
+    url: "",
     images: [
       {
         url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
