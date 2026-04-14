@@ -9,21 +9,20 @@ export interface NoteHttpResponse {
 
 export default async function fetchNotes(
   query: string,
+  tag: string,
   page: number,
-  tag?: string,
 ): Promise<NoteHttpResponse> {
   const response = await nextServer.get<NoteHttpResponse>("/notes", {
     params: {
       search: query,
-      page,
       tag: tag || undefined,
+      page,
       perPage: 12,
     },
   });
 
   return response.data;
 }
-
 export async function fetchNoteById(id: string): Promise<Note> {
   const response = await nextServer.get<Note>(`/notes/${id}`);
   return response.data;

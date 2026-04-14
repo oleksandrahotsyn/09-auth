@@ -1,4 +1,5 @@
 "use client";
+
 import css from "./page.module.css";
 
 import fetchNotes from "@/lib/api/clientApi";
@@ -14,7 +15,7 @@ import { useDebouncedCallback } from "use-debounce";
 
 export default function NotesClient({ tag }: { tag?: string }) {
   const [searchWord, setSearchWord] = useState<string>("");
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState<number>(1);
 
   const normalizedTag = tag === "all" ? "" : (tag ?? "");
 
@@ -27,30 +28,30 @@ export default function NotesClient({ tag }: { tag?: string }) {
   );
 
   const { data } = useQuery({
-    queryKey: ["myNoteHubKey", searchWord, page, normalizedTag],
-    queryFn: () => fetchNotes(searchWord, page, normalizedTag),
+    queryKey: ["myNoteHubKey", searchWord, normalizedTag, page],
+    queryFn: () => fetchNotes(searchWord, normalizedTag, page),
     placeholderData: keepPreviousData,
   });
 
   return (
     <div className={css.app}>
       <div className={css.toolbar}>
-        {<SearchBox value={searchWord} onChange={handleChange} />}
+        <SearchBox value={searchWord} onChange={handleChange} />
 
-        {data && data?.notes.length > 0 && (
+        {data && data.notes.length > 0 && (
           <Pagination
-            totalPages={data?.totalPages ?? 0}
+            totalPages={data.totalPages}
             page={page}
             onPageChange={(newPage) => setPage(newPage)}
           />
         )}
-        {
-          <Link className={css.button} href={"/notes/action/create"}>
-            Create note +
-          </Link>
-        }
+
+        <Link className={css.button} href="/notes/action/create">
+          Create note +
+        </Link>
       </div>
-      {data && data?.notes.length > 0 && <NoteList notes={data?.notes} />}
+
+      {data && data.notes.length > 0 && <NoteList notes={data.notes} />}
     </div>
   );
 }
