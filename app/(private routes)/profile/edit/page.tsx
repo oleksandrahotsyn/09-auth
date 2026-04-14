@@ -1,100 +1,152 @@
 "use client";
 
 import Image from "next/image";
-import css from "./EditProfilePage.module.css";
-import toast, { Toaster } from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/lib/store/authStore";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
+
+import css from "./EditProfilePage.module.css";
 import AvatarPicker from "@/components/AvatarPicker/AvatarPicker";
-// import { updateMe, getMe, uploadImage } from "@/lib/api/clientApi";
-const [imageFile, setImageFile] = useState<File | null>(null);
+import { getMe } from "@/lib/api/clientApi";
+import { useAuthStore } from "@/lib/store/authStore";
+
 const EditProfilePage = () => {
+  const router = useRouter();
+  const setUser = useAuthStore((state) => state.setUser);
+
   const [userName, setUserName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const setUser = useAuthStore((state) => state.setUser);
-  const router = useRouter();
+  const [avatar, setAvatar] = useState<string>(
+    "https://ac.goit.global/fullstack/react/default-avatar.jpg",
+  );
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   useEffect(() => {
-    getMe().then((user) => {
-      setUserName(user.username ?? "");
-      setEmail(user.email ?? "");
-    });
+    const fetchUser = async (): Promise<void> => {
+      try {
+        const user = await getMe();
+        setUserName(user.username ?? "");
+        setEmail(user.email ?? "");
+        setAvatar(
+          user.avatar ??
+            "https://ac.goit.global/fullstack/react/default-avatar.jpg",
+        );
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to load profile");
+      }
+    };
+
+    void fetchUser();
   }, []);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ): void => {
     setUserName(event.target.value);
   };
 
-  // const handleSaveUser = async (event: React.FormEvent<HTMLFormElement>) => {
-  //   event.preventDefault();
+  const handleAvatarChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ): void => {
+    const file = event.target.files?.[0] ?? null;
+    setImageFile(file);
 
-  //   if (userName.trim().length === 0) {
-  //     toast.error("Please write your username");
-  //     return;
-  //   }
-  //   if (userName.trim().length > 20) {
-  //     toast.error("Username cannot exceed 20 characters");
-  //     return;
-  //   }
-  //   const res = await updateUserProfile({ username: userName });
-  //   if (res) {
-  //     setUser(res);
-  //     router.push("/profile");
-  //     toast.success("Successfully edit");
-  //   }
-  // };
-
-  const handleSaveUser = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    try {
-      const newPhotoUrl = imageFile ? await uploadImage(imageFile) : "";
-      await updateMe({ userName, photoUrl: newPhotoUrl });
-    } catch (error) {
-      console.error("Oops, some error:", error);
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setAvatar(previewUrl);
     }
   };
+
+  const handleSaveUser = async (formData: FormData): Promise<void> => {
+    try {
+      const username = String(formData.get("username") ?? "").trim();
+
+      if (username.length === 0) {
+        toast.error("Please write your username");
+        return;
+      }
+
+      if (username.length > 20) {
+        toast.error("Username cannot exceed 20 characters");
+        return;
+      }
+
+      let avatarUrl: string | undefined;
+
+      if (imageFile) {
+        avatarUrl = await uploadImage(imageFile);
+      }
+
+      const updatedUser = await updateMe({
+        username,
+        avatar: avatarUrl,
+      });
+
+      setUser(updatedUser);
+      toast.success("Successfully edited profile");
+      router.push("/profile");
+    } catch (error) {
+      console.error(error);
+      toast.error("Oops... some error");
+    }
+  };
+
   return (
     <main className={css.mainContent}>
       <div className={css.profileCard}>
         <h1 className={css.formTitle}>Edit Profile</h1>
 
         <Image
-          src="https://ac.goit.global/fullstack/react/default-avatar.jpg"
+          src={avatar}
           alt="User Avatar"
           width={120}
           height={120}
           className={css.avatar}
         />
-        <AvatarPicker />
-        <form className={css.profileInfo} onSubmit={handleSaveUser}>
+
+        <AvatarPicker onChange={handleAvatarChange} />
+
+        <form className={css.profileInfo} action={handleSaveUser}>
           <div className={css.usernameWrapper}>
             <label htmlFor="username">Username:</label>
             <input
               id="username"
+              name="username"
               type="text"
               value={userName}
               className={css.input}
-              onChange={handleChange}
+              onChange={handleNameChange}
             />
           </div>
 
-          <p>Email:{email}</p>
+          <div className={css.usernameWrapper}>
+            <label htmlFor="email">Email:</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              className={css.input}
+              readOnly
+            />
+          </div>
 
           <div className={css.actions}>
             <button type="submit" className={css.saveButton}>
               Save
             </button>
+
             <button
               type="button"
               className={css.cancelButton}
-              onClick={router.back}
+              onClick={() => router.back()}
             >
               Cancel
             </button>
           </div>
         </form>
       </div>
+
       <Toaster />
     </main>
   );
