@@ -6,8 +6,7 @@ import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 
 import css from "./EditProfilePage.module.css";
-import AvatarPicker from "@/components/AvatarPicker/AvatarPicker";
-import { getMe, updateMe, uploadImage } from "@/lib/api/clientApi";
+import { getMe, updateMe } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
 
 const EditProfilePage = () => {
@@ -19,7 +18,6 @@ const EditProfilePage = () => {
   const [avatar, setAvatar] = useState<string>(
     "https://ac.goit.global/fullstack/react/default-avatar.jpg",
   );
-  const [imageFile, setImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     const fetchUser = async (): Promise<void> => {
@@ -46,18 +44,6 @@ const EditProfilePage = () => {
     setUserName(event.target.value);
   };
 
-  const handleAvatarChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    const file = event.target.files?.[0] ?? null;
-    setImageFile(file);
-
-    if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setAvatar(previewUrl);
-    }
-  };
-
   const handleSaveUser = async (formData: FormData): Promise<void> => {
     try {
       const username = String(formData.get("username") ?? "").trim();
@@ -72,16 +58,7 @@ const EditProfilePage = () => {
         return;
       }
 
-      let avatarUrl: string | undefined;
-
-      if (imageFile) {
-        avatarUrl = await uploadImage(imageFile);
-      }
-
-      const updatedUser = await updateMe({
-        username,
-        avatar: avatarUrl,
-      });
+      const updatedUser = await updateMe({ username });
 
       setUser(updatedUser);
       toast.success("Successfully edited profile");
@@ -104,8 +81,6 @@ const EditProfilePage = () => {
           height={120}
           className={css.avatar}
         />
-
-        <AvatarPicker onChange={handleAvatarChange} />
 
         <form className={css.profileInfo} action={handleSaveUser}>
           <div className={css.usernameWrapper}>
