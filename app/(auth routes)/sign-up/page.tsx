@@ -1,23 +1,29 @@
 "use client";
 
-import { RegisterRequest, register } from "@/lib/api/clientApi";
-import css from "./SignUpPage.module.css";
-import { ApiError } from "@/app/api/api";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
+import { RegisterRequest, register } from "@/lib/api/clientApi";
+import { useAuthStore } from "@/lib/store/authStore";
+import css from "./SignUpPage.module.css";
+import { ApiError } from "next/dist/server/api-utils";
 const SignUpPage = () => {
   const router = useRouter();
   const [error, setError] = useState("");
+
+  const setUser = useAuthStore((state) => state.setUser);
+
   const handleSubmit = async (formData: FormData) => {
     try {
+      setError("");
+
       const formValues = Object.fromEntries(
         formData,
       ) as unknown as RegisterRequest;
+
       const res = await register(formValues);
 
       if (res) {
-        console.log(res);
+        setUser(res);
         router.push("/profile");
       } else {
         setError("Invalid email or password");
@@ -30,10 +36,12 @@ const SignUpPage = () => {
       );
     }
   };
+
   return (
     <main className={css.mainContent}>
       <form className={css.form} action={handleSubmit}>
         <h1 className={css.formTitle}>Sign up</h1>
+
         <div className={css.formGroup}>
           <label htmlFor="email">Email</label>
           <input
@@ -62,7 +70,7 @@ const SignUpPage = () => {
           </button>
         </div>
 
-        <p className={css.error}>Error</p>
+        {error && <p className={css.error}>{error}</p>}
       </form>
     </main>
   );

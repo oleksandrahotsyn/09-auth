@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/store/authStore";
 import { useEffect, useState } from "react";
 import AvatarPicker from "@/components/AvatarPicker/AvatarPicker";
-import { updateMe, getMe, uploadImage } from "@/lib/api/clientApi";
+// import { updateMe, getMe, uploadImage } from "@/lib/api/clientApi";
 const [imageFile, setImageFile] = useState<File | null>(null);
 const EditProfilePage = () => {
   const [userName, setUserName] = useState<string>("");

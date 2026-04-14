@@ -45,12 +45,12 @@ export async function createNote({
     content,
     tag,
   });
+
   return postResponse.data;
 }
 
 export async function deleteNote(id: string): Promise<Note> {
   const deleteResponse = await nextServer.delete<Note>(`/notes/${id}`);
-
   return deleteResponse.data;
 }
 
@@ -59,17 +59,12 @@ export interface RegisterRequest {
   password: string;
 }
 
-export interface UserRegister {
-  username: string;
-  email: string;
-}
-
-export async function register(data: RegisterRequest) {
+export async function register(data: RegisterRequest): Promise<User> {
   const res = await nextServer.post<User>("/auth/register", data);
   return res.data;
 }
 
-export async function login(data: RegisterRequest) {
+export async function login(data: RegisterRequest): Promise<User> {
   const res = await nextServer.post<User>("/auth/login", data);
   return res.data;
 }
@@ -82,34 +77,23 @@ interface CheckSessionRequest {
   success: boolean;
 }
 
-export async function checkSession() {
+export async function checkSession(): Promise<boolean> {
   const res = await nextServer.get<CheckSessionRequest>("/auth/session");
   return res.data.success;
 }
 
-export const getMe = async () => {
+export const getMe = async (): Promise<User> => {
   const res = await nextServer.get<User>("/users/me");
   return res.data;
 };
 
-export const updateUserProfile = async (payload: UpdateUserRequest) => {
+export interface UpdateUserRequest {
+  username: string;
+}
+
+export const updateUserProfile = async (
+  payload: UpdateUserRequest,
+): Promise<User> => {
   const res = await nextServer.patch<User>("/users/me", payload);
-  return res.data;
-};
-
-export const uploadImage = async (file: File): Promise<string> => {
-  const formData = new FormData();
-  formData.append("file", file);
-  const { data } = await nextServer.post("/upload", formData);
-  return data.url;
-};
-
-export type UpdateUserRequest = {
-  userName?: string;
-  photoUrl?: string;
-};
-
-export const updateMe = async (payload: UpdateUserRequest) => {
-  const res = await nextServer.put<User>("/auth/me", payload);
   return res.data;
 };
