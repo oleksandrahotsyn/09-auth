@@ -7,7 +7,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 import css from "./EditProfilePage.module.css";
 import AvatarPicker from "@/components/AvatarPicker/AvatarPicker";
-import { getMe } from "@/lib/api/clientApi";
+import { getMe, updateMe, uploadImage } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
 
 const EditProfilePage = () => {

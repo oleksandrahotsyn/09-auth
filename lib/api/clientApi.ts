@@ -97,3 +97,29 @@ export const updateUserProfile = async (
   const res = await nextServer.patch<User>("/users/me", payload);
   return res.data;
 };
+export interface UpdateUserPayload {
+  username: string;
+  avatar?: string;
+}
+
+export async function updateMe(payload: UpdateUserPayload): Promise<User> {
+  const response = await nextServer.patch<User>("/users/me", payload);
+  return response.data;
+}
+
+export async function uploadImage(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await nextServer.post<{ url: string }>(
+    "/users/upload",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    },
+  );
+
+  return response.data.url;
+}
